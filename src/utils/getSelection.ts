@@ -6,7 +6,7 @@ export const getSelection = (
   const selectionStart = textarea.selectionStart;
   const selectionEnd = textarea.selectionEnd;
 
-  if (selectionEnd == selectionStart) return;
+  if (selectionEnd === selectionStart) return;
 
   return textarea.value.substring(
     Math.min(selectionStart, selectionEnd),

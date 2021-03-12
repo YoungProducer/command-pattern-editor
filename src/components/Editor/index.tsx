@@ -1,42 +1,43 @@
-import { useEffect, useRef, useContext } from "react";
+import {
+  useEffect,
+  useRef,
+  useContext,
+  ChangeEvent,
+  useLayoutEffect
+} from "react";
 import { ApplicationContext } from "../../Application/Context";
-import { getSelection } from "../../utils";
 
 export const Editor = () => {
   const { application } = useContext(ApplicationContext);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const checkSelection = () => {
-    if (!getSelection(textareaRef?.current)) {
-      application.getEditor().clearSelection();
-    }
-  };
+  useLayoutEffect(() => {
+    if (!textareaRef.current) return;
+    application.getEditor().setTextArea(textareaRef.current);
+  }, [textareaRef, application]);
 
   const onSelect = () => {
-    if (!textareaRef.current) return;
-
-    const selectedText = getSelection(textareaRef.current);
-
-    if (!selectedText) return;
-
-    application.getEditor().setSelection(selectedText);
+    application.getEditor().updateSelection();
   };
 
   const onClick = () => {
-    checkSelection();
+    application.getEditor().checkSelection();
   };
 
   const onBlur = () => {
-    checkSelection();
+    application.getEditor().checkSelection();
   };
 
   const onFocus = () => {
-    checkSelection();
+    application.getEditor().checkSelection();
   };
 
-  const onChange = () => {
-    checkSelection();
+  const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    application.getEditor().checkSelection();
+
+    const value = e.target.value;
+    application.getEditor().setText(value);
   };
 
   useEffect(() => {
@@ -44,7 +45,7 @@ export const Editor = () => {
 
     return () => {
       textareaRef.current?.removeEventListener("select", onSelect);
-      checkSelection();
+      application.getEditor().checkSelection();
     };
   }, []);
 

@@ -10,6 +10,8 @@ export class Application {
   constructor(editor: Editor, history: CommandsHistory) {
     this.editor = editor;
     this.history = history;
+
+    this.editor.setApp(this);
   }
 
   executeCommand(command: Command) {
