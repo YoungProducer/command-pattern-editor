@@ -29,6 +29,12 @@ export class Editor {
     this.selection = selectedText;
   }
 
+  updateTextAreaValue(): void {
+    if (!this.textarea) return;
+
+    this.textarea.value = this.text;
+  }
+
   pasteSelection(): void {
     if (!this.textarea) return;
 
@@ -48,7 +54,7 @@ export class Editor {
 
     this.text = text;
 
-    this.textarea.value = text;
+    this.updateTextAreaValue();
   }
 
   setTextArea(textarea: HTMLTextAreaElement): void {

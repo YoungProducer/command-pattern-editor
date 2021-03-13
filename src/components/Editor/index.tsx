@@ -1,25 +1,22 @@
 import {
-  useEffect,
   useRef,
   useContext,
   ChangeEvent,
-  useLayoutEffect
+  useLayoutEffect,
+  useCallback
 } from "react";
+
 import { ApplicationContext } from "../../Application/Context";
+import { EditCommand } from "../../layers/ComandsLayer/Commands";
 
 export const Editor = () => {
   const { application } = useContext(ApplicationContext);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  useLayoutEffect(() => {
-    if (!textareaRef.current) return;
-    application.getEditor().setTextArea(textareaRef.current);
-  }, [textareaRef, application]);
-
-  const onSelect = () => {
+  const onSelect = useCallback(() => {
     application.getEditor().updateSelection();
-  };
+  }, [application]);
 
   const onClick = () => {
     application.getEditor().checkSelection();
@@ -36,18 +33,21 @@ export const Editor = () => {
   const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     application.getEditor().checkSelection();
 
-    const value = e.target.value;
-    application.getEditor().setText(value);
+    const command = new EditCommand(application, application.getEditor());
+    application.executeCommand(command, e.target.value);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!textareaRef.current) return;
+
     textareaRef.current?.addEventListener("select", onSelect);
+    application.getEditor().setTextArea(textareaRef.current);
 
     return () => {
       textareaRef.current?.removeEventListener("select", onSelect);
       application.getEditor().checkSelection();
     };
-  }, []);
+  }, [textareaRef, application, onSelect]);
 
   return (
     <div>

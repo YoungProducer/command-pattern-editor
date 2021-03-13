@@ -14,8 +14,8 @@ export class Application {
     this.editor.setApp(this);
   }
 
-  executeCommand(command: Command) {
-    if (command.execute()) {
+  executeCommand(command: Command, ...args: any[]) {
+    if (command.execute(args)) {
       this.history.push(command);
     }
   }

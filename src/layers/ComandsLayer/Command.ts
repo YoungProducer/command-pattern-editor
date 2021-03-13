@@ -4,7 +4,7 @@ import { Editor } from "../../Editor";
 export class Command {
   protected app: Application;
   protected editor: Editor;
-  protected backup: string;
+  protected backup: string = "";
 
   constructor(app: Application, editor: Editor) {
     this.app = app;
@@ -15,11 +15,12 @@ export class Command {
     this.backup = this.editor.getText();
   }
 
-  execute(): boolean {
+  execute(...args: any[]): boolean {
     return true;
   }
 
   undo(): void {
     this.editor.setText(this.backup);
+    this.editor.updateTextAreaValue();
   }
 }
